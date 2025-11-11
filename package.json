@@ -1,0 +1,15 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is my first project",
+  "main": "index.js",
+  "scripts": {
+    "test": " "
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "Prabuddha wade",
+  "license": "ISC"
+}
