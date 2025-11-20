@@ -48,16 +48,16 @@ const publishVideo = asyncHandler(async (req, res) => {
         throw new ApiError(404,"user not found")
     }
 
-    console.log("updated Video duration: ",updateVideo.duration)
+    console.log("updated Video duration: ",uploadedVideo.duration)
 // create video
-const videoPublished=await Video.create({
+    const videoPublished=await Video.create({
             videoFile: updateVideo?.url,
             thumbnail: uploadThambnail?.url || uploadedVideo.url, // Use video URL as thumbnail if no separate thumbnail
             title: title.trim(),
             description: description.trim(),
-            duration: updateVideo.duration || 0, // Extract duration from Cloudinary response if available
+            duration: uploadedVideo.duration || 0, // Extract duration from Cloudinary response if available
             owner: user._id,
-            isPublished:true
+          
 })
 
 //  return RESPONSE
@@ -97,16 +97,19 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
    
     if(!videoId){
-        throw ApiError(404,"video not found")
+        throw new ApiError(404,"video not found")
     }
 // Get the new details from req.body (e.g., title, description, ).
- const {title, description}=req.body
- if ( 
-    [title, description].some((field) => field?.trim() === "")
-    ){
+    const {title, description } = req.body
+    // TODO: get video, upload to cloudinary, create video
+console.log("title: ",title)
+console.log("des: ",description)
+   if (
+        [title, description].some((field) => field?.trim() === "")
+    ) {
         throw new ApiError(400, "All fields are required")
     }
-    // Update the video.
+    //Update the video.
 
 const updateVideo=await Video.findByIdAndUpdate(videoId,{
     title,
@@ -120,12 +123,52 @@ const updateVideo=await Video.findByIdAndUpdate(videoId,{
 })
 
 const deleteVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
     //TODO: delete video
+    const { videoId } = req.params
+    if(!videoId){
+        throw new ApiError(404,"Video not found")
+    }
+    const video=await Video.findById(videoId)
+    if(!video){
+        throw new ApiError(404,"Video not exist")
+    }
+
+//delete video from db 
+    const deleteVideo=await Video.findByIdAndDelete(videoId)
+
+    if(!deleteVideo){throw new ApiError(400,"video not valid")}
+    return res
+    .status(200)
+    .json(new ApiResponse(200,deleteVideo,"video delete successfully"))
+    
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+
+    if(!videoId){throw new ApiError(400,"video not valid")}
+
+    //video onwer find
+    const videoOwner=await Video.findOne(
+        {   _id:videoId,
+            owner:req.user?._id,
+        }
+    )
+    
+    if(!videoOwner){throw new ApiError(400,"video owner not valid")}
+
+    const publishStatus=await Video.findByIdAndUpdate(videoId,
+        {
+        isPublished:true
+    },{new:true})
+    if(!publishStatus){throw new ApiError(400,"status not changed")}
+
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, publishStatus,`Video ${publishStatus.isPublished ? 'published' : 'unpublished'} successfully`))
+
+
 })
 
 export {
