@@ -1,1 +1,1 @@
-# This my video stream backend Project
+# This is my video streaming backend Project
