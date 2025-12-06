@@ -41,6 +41,6 @@ router
     .patch(updateVideo);
 
 router.route("/publish/:videoId").patch(togglePublishStatus);
-router.route("/video/user/:userId").get(getAllVideos);
+router.route("/user/:userId").get(getUserVideos);
 
 export default router
