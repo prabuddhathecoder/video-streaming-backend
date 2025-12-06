@@ -71,7 +71,7 @@ const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
     if(!videoId){
-        throw ApiError(404,"video not found")
+        throw new ApiError(404,"video not found")
     }
 
     // check video in published or not
@@ -82,7 +82,7 @@ const getVideoById = asyncHandler(async (req, res) => {
     })
 
     if(!isVideoPublished){
-        throw ApiError(404,"video not published")
+        throw new ApiError(404,"video not published")
     }
 
     return res
@@ -171,11 +171,36 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 })
 
+const getUserVideos = asyncHandler(async (req, res) => {
+     
+    const {userId}=req.params;
+
+    if(!userId){
+
+        throw new ApiError(404,"User Not found")
+    }
+    // Get videos (newest first)
+    const videos = await Video.find({owner:userId})
+        .sort({ createdAt: -1 })
+        .populate('owner', 'username avatar')
+
+    if(!videos){
+
+        throw new ApiError(404,"video Not found")
+    }
+    
+    res.status(200).json(new ApiResponse(200,{
+        success: true,
+        data: videos
+    },"Get user video's sueccessfully !!!"));
+});
+
 export {
     getAllVideos,
     publishVideo,
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    getUserVideos
 }
