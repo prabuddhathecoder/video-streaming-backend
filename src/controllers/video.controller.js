@@ -34,7 +34,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     //TODO: get all videos based on query, sort, pagination
 })
 
-const publishVideo = asyncHandler(async (req, res) => {
+const createVideo = asyncHandler(async (req, res) => {
     const { title, description} = req.body
     // TODO: get video, upload to cloudinary, create video
 
@@ -71,7 +71,7 @@ const publishVideo = asyncHandler(async (req, res) => {
     console.log("updated Video duration: ",uploadedVideo.duration)
 // create video
     const videoPublished=await Video.create({
-            videoFile: updateVideo?.url,
+            videoFile: uploadedVideo?.url,
             thumbnail: uploadThambnail?.url || uploadedVideo.url, // Use video URL as thumbnail if no separate thumbnail
             title: title.trim(),
             description: description.trim(),
@@ -220,7 +220,7 @@ const getUserVideos = asyncHandler(async (req, res) => {
 
 export {
     getAllVideos,
-    publishVideo,
+    createVideo ,
     getVideoById,
     updateVideo,
     deleteVideo,

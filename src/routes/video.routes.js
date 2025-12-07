@@ -4,7 +4,7 @@ import {
     deleteVideo,
     getAllVideos,
     getVideoById,
-    publishVideo,
+    createVideo,
     togglePublishStatus,
     updateVideo,
     getUserVideos
@@ -35,7 +35,7 @@ router
             },
             
         ]),
-        publishVideo
+        createVideo
     );
 
 router
