@@ -14,6 +14,10 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 
 const router = Router();
+//this route is public
+router.route("/").get(getAllVideos)
+
+//from this point all routes are authenticated
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 router
